@@ -1,0 +1,12 @@
+/node_modules
+npm-debug.log
+.DS_Store
+/*.env
+/build
+/.idea
+logs
+/debug.log
+coverage
+package-lock.json
+public 
+/dist
