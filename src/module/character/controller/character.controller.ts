@@ -38,9 +38,15 @@ class CharacterController {
         characters = characters.filter((item: any) => item.gender === gender);
 
       if (sortby)
-        characters = characters.sort(
-          (a: any, b: any) => a[sortby.toString()] - b[sortby.toString()],
-        );
+        characters = characters.sort((a: any, b: any) => {
+          if (a[sortby.toString()] < b[sortby.toString()]) {
+            return -1;
+          }
+          if (a[sortby.toString()] > b[sortby.toString()]) {
+            return 1;
+          }
+          return 0;
+        });
 
       return ResponseHandler.SuccessResponse(
         res,
