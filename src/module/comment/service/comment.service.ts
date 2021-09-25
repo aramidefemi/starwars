@@ -35,10 +35,9 @@ class CommentService {
 
   public static async groupByAndCount(path: string) {
     try {
-      return await Comment.findAll({
-        group: [path],
-        attributes: [path, [Sequelize.fn('COUNT', path), 'count']],
-      });
+      return await sequelize.query(
+        'SELECT *, COUNT(`movieId`) as totalComment FROM `comments` GROUP By `movieId`',
+      );
     } catch (e) {
       return e;
     }
@@ -46,7 +45,10 @@ class CommentService {
 
   public static async get(data: IFindComment) {
     try {
-      return await Comment.findAll({ where: { movieId: data.movieId } });
+      return await Comment.findAll({
+        where: { movieId: data.movieId },
+        order: [['createdAt', 'DESC']],
+      });
     } catch (e) {
       return e;
     }

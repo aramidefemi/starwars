@@ -8,7 +8,8 @@ import CommentService from '../../comment/service/comment.service';
 class MovieController {
   public fetchMovies = async (req: Request, res: Response) => {
     const payload = await MovieService.fetchMovies();
-    const commentsCount = await CommentService.groupByAndCount('movieId');
+    const rawCommentsCount = await CommentService.groupByAndCount('movieId');
+    const commentsCount = rawCommentsCount[0];
 
     const movies = payload?.data?.results
       .sort((a: any, b: any) => {
@@ -18,13 +19,16 @@ class MovieController {
         );
       })
       .map((item: any) => {
+        const comment = commentsCount.filter(
+          (commentItem: any) => commentItem.movieId === item.episode_id,
+        );
+
         return {
           release_date: item.release_date,
           opening_crawl: item.opening_crawl,
           episode_id: item.episode_id,
           title: item.title,
-          comments: commentsCount[item.episode_id] || 0,
-          commentsCount,
+          comments: comment[0]?.totalComment || 0,
         };
       });
 

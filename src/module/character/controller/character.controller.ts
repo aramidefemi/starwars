@@ -9,6 +9,8 @@ import { toFt } from '../helper/height';
 
 class CharacterController {
   public fetchMovieCharacterList = async (req: Request, res: Response) => {
+    const { sortby, gender } = req.query;
+
     const payload = await MovieService.fetchMovie(req.params.episode_id);
 
     const characterDetailAPI = payload.data.characters.map(
@@ -30,11 +32,21 @@ class CharacterController {
           HttpStatus.BAD_REQUEST,
           message.MSG_LIST_FETCH_NOT_SUCCESSFUL,
         );
+      let characters = result;
+
+      if (gender)
+        characters = characters.filter((item: any) => item.gender === gender);
+
+      if (sortby)
+        characters = characters.sort(
+          (a: any, b: any) => a[sortby.toString()] - b[sortby.toString()],
+        );
+
       return ResponseHandler.SuccessResponse(
         res,
-        HttpStatus.CREATED,
+        HttpStatus.OK,
         message.MSG_LIST_FETCH_SUCCESSFUL,
-        result,
+        characters,
       );
     });
   };
